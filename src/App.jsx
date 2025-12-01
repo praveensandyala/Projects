@@ -8,7 +8,7 @@ import Checkout from './pages/Checkout'
 import OrderSuccess from './pages/OrderSuccess'
 import { useCart } from './context/CartContext'
 import MyOrders from './pages/MyOrders'
-
+import './styles/header.css';
 
 export default function App(){
   const { cart } = useCart()

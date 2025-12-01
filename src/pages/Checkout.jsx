@@ -22,7 +22,7 @@ export default function Checkout(){
     // Build order object
     const order = {
       id: 'ORD' + Date.now(),
-      date: new Date().toISOString(),            // ISO date for sorting
+      date: new Date().toISOString(),
       customer: { name: form.name, phone: form.phone, address: form.address },
       items: cart.map(i => ({
         id: i.id,
@@ -34,51 +34,73 @@ export default function Checkout(){
         farmer: i.farmer
       })),
       subtotal: Number(total),
-      shipping: 0,   // change if you calculate shipping
+      shipping: 0,
       tax: 0,
-      total: Number(total) // subtotal + shipping + tax
+      total: Number(total)
     }
 
-    // Read existing orders from localStorage (or empty array)
     const existing = JSON.parse(localStorage.getItem('orders') || '[]')
-    // Add new order at start (most recent first)
     existing.unshift(order)
     localStorage.setItem('orders', JSON.stringify(existing))
 
-    // clear cart and navigate to orders page
     clearCart()
     navigate('/success')
   }
 
   return (
-    <div style={{marginTop:18}}>
-      <h2>Checkout</h2>
-      <div className="card" style={{display:'grid',gridTemplateColumns:'1fr 360px',gap:16}}>
-        <div>
-          <label className="small">Name</label>
-          <input name="name" value={form.name} onChange={onChange} style={{width:'100%',padding:8,marginTop:6}} />
+    <>
+      <style>
+        {`
+          .checkout-layout {
+            display: grid;
+            grid-template-columns: 1fr 360px;
+            gap: 16px;
+            align-items: flex-start;
+          }
+          @media (max-width: 768px) {
+            .checkout-layout {
+              grid-template-columns: 1fr;
+            }
+            .order-summary {
+              margin-top: 16px;
+              width: 100%;
+            }
+          }
+        `}
+      </style>
+      <div style={{marginTop:18}}>
+        <h2>Checkout</h2>
+        <div className="card checkout-layout">
+          <div>
+            <label className="small">Name</label>
+            <input name="name" value={form.name} onChange={
+onChange} style={{width:'100%',padding:8,marginTop:6}} />
 
-          <label className="small" style={{marginTop:12}}>Phone</label>
-          <input name="phone" value={form.phone} onChange={onChange} style={{width:'100%',padding:8,marginTop:6}} />
+            <label className="small" style={{marginTop:12}}>Phone</label>
+            <input name="phone" value={form.phone} onChange={onChange} style={{width:'100%',padding:8,marginTop:6}} />
 
-          <label className="small" style={{marginTop:12}}>Address</label>
-          <textarea name="address" value={form.address} onChange={onChange} style={{width:'100%',padding:8,marginTop:6}} rows={4} />
+            <label className="small" style={{marginTop:12}}>Address</label>
+            <textarea name="address" value={form.address} onChange={onChange} style={{width:'100%',padding:8,marginTop:6}} rows={4} />
 
-          {error && <div style={{color:'red',marginTop:8}}>{error}</div>}
+            {error && <div style={{color:'red',marginTop:8}}>{error}</div>}
 
-          <div style={{marginTop:12}}>
-            <button className="button" onClick={placeOrder}>Place Order</button>
+            <div style={{marginTop:12}}>
+              <button className="button" onClick={placeOrder}>Place Order</button>
+            </div>
           </div>
-        </div>
 
-        <div>
-          <div className="card">
-            <h3>Order Summary</h3>
-            <div className="small">Items: {cart.length}</div>
-            <div style={{display:'flex',justifyContent:'space-between',marginTop:8}}><div className="small">Total</div><div style={{fontWeight:700}}>{formatCurrency(total)}</div></div>
+          <div>
+            <div className="order-summary card">
+              <h3>Order Summary</h3>
+              <div className="small">Items: {cart.length}</div>
+              <div style={{display:'flex',justifyContent:'space-between',marginTop:8}}>
+                <div className="small">Total</div>
+                <div style={{fontWeight:700}}>{formatCurrency(total)}</div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   )
 }
